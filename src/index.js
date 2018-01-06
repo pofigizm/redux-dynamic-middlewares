@@ -1,32 +1,36 @@
 import { compose } from 'redux'
 
-let dynamic = []
+let allDynamicMiddlewares = []
 
-const dynamicMiddlewares = store => next => action => {
+const dynamicMiddlewares = ({ getState, dispatch }) => next => action => {
   const middlewareAPI = {
-    getState: store.getState,
-    dispatch: (act) => store.dispatch(act),
+    getState,
+    dispatch: act => dispatch(act),
   }
-  const chain = dynamic.map(middleware => middleware(middlewareAPI))
+
+  const chain = allDynamicMiddlewares.map(middleware => middleware(middlewareAPI))
+
   return compose(...chain)(next)(action)
 }
 
 const addMiddleware = (...middlewares) => {
-  dynamic = dynamic.concat(...middlewares)
+  allDynamicMiddlewares = [...allDynamicMiddlewares, ...middlewares];
 }
 
 const removeMiddleware = middleware => {
-  const index = dynamic.findIndex(d => d === middleware)
-  if (index === -1) return
+  const index = allDynamicMiddlewares.findIndex(d => d === middleware)
 
-  dynamic = [
-    ...dynamic.slice(0, index),
-    ...dynamic.slice(index + 1),
-  ]
+  if (index === -1) {
+    console.error('Middleware does not exist!', middleware)
+
+    return;
+  }
+
+  allDynamicMiddlewares = allDynamicMiddlewares.filter((middleware, mdwIndex) => mdwIndex !== index);
 }
 
 const resetMiddlewares = () => {
-  dynamic = []
+  allDynamicMiddlewares = []
 }
 
 export default dynamicMiddlewares
