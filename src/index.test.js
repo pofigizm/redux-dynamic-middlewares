@@ -7,10 +7,12 @@ const reducer = (state = {}, action) => {
 }
 
 test('redux should work without error', () => {
+  // eslint-disable-next-line no-console
   console.error = jest.fn()
   const store = createStore(reducer, applyMiddleware(dynamicMiddlewares))
   expect(store.getState()).toEqual({})
   store.dispatch({ type: 'foo' })
+  // eslint-disable-next-line no-console
   expect(console.error).not.toBeCalled()
   expect(store.getState()).toEqual({ foo: 'bar' })
 })
@@ -18,7 +20,7 @@ test('redux should work without error', () => {
 test('middleware should be called', () => {
   const store = createStore(reducer, applyMiddleware(dynamicMiddlewares))
   const middlewareWork = jest.fn()
-  const middleware = store => next => action => {
+  const middleware = () => next => (action) => {
     middlewareWork(action)
     return next(action)
   }
@@ -31,12 +33,12 @@ test('middleware should be called', () => {
 test('all middlewares by single add should be called', () => {
   const store = createStore(reducer, applyMiddleware(dynamicMiddlewares))
   const firstMiddlewareWork = jest.fn()
-  const firstMiddleware = store => next => action => {
+  const firstMiddleware = () => next => (action) => {
     firstMiddlewareWork(action)
     return next(action)
   }
   const secondMiddlewareWork = jest.fn()
-  const secondMiddleware = store => next => action => {
+  const secondMiddleware = () => next => (action) => {
     secondMiddlewareWork(action)
     return next(action)
   }
@@ -50,12 +52,12 @@ test('all middlewares by single add should be called', () => {
 test('all middlewares by separate add should be called', () => {
   const store = createStore(reducer, applyMiddleware(dynamicMiddlewares))
   const firstMiddlewareWork = jest.fn()
-  const firstMiddleware = store => next => action => {
+  const firstMiddleware = () => next => (action) => {
     firstMiddlewareWork(action)
     return next(action)
   }
   const secondMiddlewareWork = jest.fn()
-  const secondMiddleware = store => next => action => {
+  const secondMiddleware = () => next => (action) => {
     secondMiddlewareWork(action)
     return next(action)
   }
@@ -70,12 +72,12 @@ test('all middlewares by separate add should be called', () => {
 test('removed middlewares should not be called', () => {
   const store = createStore(reducer, applyMiddleware(dynamicMiddlewares))
   const firstMiddlewareWork = jest.fn()
-  const firstMiddleware = store => next => action => {
+  const firstMiddleware = () => next => (action) => {
     firstMiddlewareWork(action)
     return next(action)
   }
   const secondMiddlewareWork = jest.fn()
-  const secondMiddleware = store => next => action => {
+  const secondMiddleware = () => next => (action) => {
     secondMiddlewareWork(action)
     return next(action)
   }
@@ -90,12 +92,12 @@ test('removed middlewares should not be called', () => {
 test('reset middlewares should work', () => {
   const store = createStore(reducer, applyMiddleware(dynamicMiddlewares))
   const firstMiddlewareWork = jest.fn()
-  const firstMiddleware = store => next => action => {
+  const firstMiddleware = () => next => (action) => {
     firstMiddlewareWork(action)
     return next(action)
   }
   const secondMiddlewareWork = jest.fn()
-  const secondMiddleware = store => next => action => {
+  const secondMiddleware = () => next => (action) => {
     secondMiddlewareWork(action)
     return next(action)
   }

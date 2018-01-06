@@ -2,7 +2,7 @@ import { compose } from 'redux'
 
 let allDynamicMiddlewares = []
 
-const dynamicMiddlewares = ({ getState, dispatch }) => next => action => {
+const dynamicMiddlewares = ({ getState, dispatch }) => next => (action) => {
   const middlewareAPI = {
     getState,
     dispatch: act => dispatch(act),
@@ -14,19 +14,20 @@ const dynamicMiddlewares = ({ getState, dispatch }) => next => action => {
 }
 
 const addMiddleware = (...middlewares) => {
-  allDynamicMiddlewares = [...allDynamicMiddlewares, ...middlewares];
+  allDynamicMiddlewares = [...allDynamicMiddlewares, ...middlewares]
 }
 
-const removeMiddleware = middleware => {
+const removeMiddleware = (middleware) => {
   const index = allDynamicMiddlewares.findIndex(d => d === middleware)
 
   if (index === -1) {
+    // eslint-disable-next-line no-console
     console.error('Middleware does not exist!', middleware)
 
-    return;
+    return
   }
 
-  allDynamicMiddlewares = allDynamicMiddlewares.filter((middleware, mdwIndex) => mdwIndex !== index);
+  allDynamicMiddlewares = allDynamicMiddlewares.filter((_, mdwIndex) => mdwIndex !== index)
 }
 
 const resetMiddlewares = () => {
