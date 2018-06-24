@@ -1,6 +1,6 @@
 {
   "name": "redux-dynamic-middlewares",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Allow add or remove redux middlewares dynamically",
   "main": "lib/index.js",
   "scripts": {
@@ -28,13 +28,13 @@
   },
   "devDependencies": {
     "babel-cli": "6.26.0",
-    "babel-core": "6.26.0",
-    "babel-jest": "22.0.4",
-    "babel-preset-pofigizm": "0.4.0",
-    "eslint": "4.14.0",
+    "babel-core": "6.26.3",
+    "babel-jest": "23.0.1",
+    "babel-preset-pofigizm": "0.4.1",
+    "eslint": "5.0.0",
     "eslint-config-pofigizm": "0.3.2",
     "redux": ">=3.0.0",
-    "jest": "22.0.4"
+    "jest": "23.1.0"
   },
   "babel": {
     "presets": [
