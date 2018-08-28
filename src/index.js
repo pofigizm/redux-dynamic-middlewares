@@ -2,13 +2,8 @@ import { compose } from 'redux'
 
 let allDynamicMiddlewares = []
 
-const dynamicMiddlewares = ({ getState, dispatch }) => next => (action) => {
-  const middlewareAPI = {
-    getState,
-    dispatch: act => dispatch(act),
-  }
-
-  const chain = allDynamicMiddlewares.map(middleware => middleware(middlewareAPI))
+const dynamicMiddlewares = store => next => (action) => {
+  const chain = allDynamicMiddlewares.map(middleware => middleware(store))
 
   return compose(...chain)(next)(action)
 }
