@@ -1,9 +1,9 @@
 import { compose } from 'redux'
 
-const getDynamicMiddleware = () => {
+const getDynamicMiddlewareManager = () => {
   let allDynamicMiddlewares = []
 
-  const dynamicMiddlewares = store => next => (action) => {
+  const dynamicMiddleware = store => next => (action) => {
     const chain = allDynamicMiddlewares.map(middleware => middleware(store))
 
     return compose(...chain)(next)(action)
@@ -31,10 +31,10 @@ const getDynamicMiddleware = () => {
   }
 
   return {
-    dynamicMiddlewares,
+    dynamicMiddleware,
     addMiddleware,
     removeMiddleware,
     resetMiddlewares
   }
 }
-export default getDynamicMiddleware;
+export default getDynamicMiddlewareManager;

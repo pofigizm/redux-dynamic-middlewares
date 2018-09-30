@@ -1,5 +1,5 @@
 import { applyMiddleware, createStore } from 'redux'
-import getDynamicMiddleware from './'
+import getDynamicMiddlewareManager from './'
 
 const reducer = (state = {}, action) => {
   if (action.type === 'foo') return { foo: 'bar' }
@@ -9,7 +9,7 @@ const reducer = (state = {}, action) => {
 test('redux should work without error', () => {
   // eslint-disable-next-line no-console
   console.error = jest.fn();
-  const dm = getDynamicMiddleware();
+  const dm = getDynamicMiddlewareManager();
   const store = createStore(reducer, applyMiddleware(dm.dynamicMiddlewares))
   expect(store.getState()).toEqual({})
   store.dispatch({ type: 'foo' })
@@ -19,7 +19,7 @@ test('redux should work without error', () => {
 })
 
 test('middleware should be called', () => {
-  const dm = getDynamicMiddleware();
+  const dm = getDynamicMiddlewareManager();
   const store = createStore(reducer, applyMiddleware(dm.dynamicMiddlewares))
   const middlewareWork = jest.fn()
   const middleware = () => next => (action) => {
@@ -33,7 +33,7 @@ test('middleware should be called', () => {
 })
 
 test('all middlewares by single add should be called', () => {
-  const dm = getDynamicMiddleware();
+  const dm = getDynamicMiddlewareManager();
   const store = createStore(reducer, applyMiddleware(dm.dynamicMiddlewares))
   const firstMiddlewareWork = jest.fn()
   const firstMiddleware = () => next => (action) => {
@@ -53,7 +53,7 @@ test('all middlewares by single add should be called', () => {
 })
 
 test('all middlewares by separate add should be called', () => {
-  const dm = getDynamicMiddleware();
+  const dm = getDynamicMiddlewareManager();
   const store = createStore(reducer, applyMiddleware(dm.dynamicMiddlewares))
   const firstMiddlewareWork = jest.fn()
   const firstMiddleware = () => next => (action) => {
@@ -74,7 +74,7 @@ test('all middlewares by separate add should be called', () => {
 })
 
 test('removed middlewares should not be called', () => {
-  const dm = getDynamicMiddleware();
+  const dm = getDynamicMiddlewareManager();
   const store = createStore(reducer, applyMiddleware(dm.dynamicMiddlewares))
   const firstMiddlewareWork = jest.fn()
   const firstMiddleware = () => next => (action) => {
@@ -95,7 +95,7 @@ test('removed middlewares should not be called', () => {
 })
 
 test('reset middlewares should work', () => {
-  const dm = getDynamicMiddleware();
+  const dm = getDynamicMiddlewareManager();
   const store = createStore(reducer, applyMiddleware(dm.dynamicMiddlewares))
   const firstMiddlewareWork = jest.fn()
   const firstMiddleware = () => next => (action) => {
