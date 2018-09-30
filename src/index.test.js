@@ -1,5 +1,5 @@
 import { applyMiddleware, createStore } from 'redux'
-import dynamicMiddlewares, { addMiddleware, removeMiddleware, resetMiddlewares } from './'
+import getDynamicMiddlewareManager from './'
 
 const reducer = (state = {}, action) => {
   if (action.type === 'foo') return { foo: 'bar' }
@@ -8,8 +8,9 @@ const reducer = (state = {}, action) => {
 
 test('redux should work without error', () => {
   // eslint-disable-next-line no-console
-  console.error = jest.fn()
-  const store = createStore(reducer, applyMiddleware(dynamicMiddlewares))
+  console.error = jest.fn();
+  const dm = getDynamicMiddlewareManager();
+  const store = createStore(reducer, applyMiddleware(dm.dynamicMiddlewares))
   expect(store.getState()).toEqual({})
   store.dispatch({ type: 'foo' })
   // eslint-disable-next-line no-console
@@ -18,20 +19,22 @@ test('redux should work without error', () => {
 })
 
 test('middleware should be called', () => {
-  const store = createStore(reducer, applyMiddleware(dynamicMiddlewares))
+  const dm = getDynamicMiddlewareManager();
+  const store = createStore(reducer, applyMiddleware(dm.dynamicMiddlewares))
   const middlewareWork = jest.fn()
   const middleware = () => next => (action) => {
     middlewareWork(action)
     return next(action)
   }
-  addMiddleware(middleware)
+  dm.addMiddleware(middleware)
 
   store.dispatch({ type: 'foo' })
   expect(middlewareWork).toBeCalledWith({ type: 'foo' })
 })
 
 test('all middlewares by single add should be called', () => {
-  const store = createStore(reducer, applyMiddleware(dynamicMiddlewares))
+  const dm = getDynamicMiddlewareManager();
+  const store = createStore(reducer, applyMiddleware(dm.dynamicMiddlewares))
   const firstMiddlewareWork = jest.fn()
   const firstMiddleware = () => next => (action) => {
     firstMiddlewareWork(action)
@@ -42,7 +45,7 @@ test('all middlewares by single add should be called', () => {
     secondMiddlewareWork(action)
     return next(action)
   }
-  addMiddleware(firstMiddleware, secondMiddleware)
+  dm.addMiddleware(firstMiddleware, secondMiddleware)
 
   store.dispatch({ type: 'foo' })
   expect(firstMiddlewareWork).toBeCalledWith({ type: 'foo' })
@@ -50,7 +53,8 @@ test('all middlewares by single add should be called', () => {
 })
 
 test('all middlewares by separate add should be called', () => {
-  const store = createStore(reducer, applyMiddleware(dynamicMiddlewares))
+  const dm = getDynamicMiddlewareManager();
+  const store = createStore(reducer, applyMiddleware(dm.dynamicMiddlewares))
   const firstMiddlewareWork = jest.fn()
   const firstMiddleware = () => next => (action) => {
     firstMiddlewareWork(action)
@@ -61,8 +65,8 @@ test('all middlewares by separate add should be called', () => {
     secondMiddlewareWork(action)
     return next(action)
   }
-  addMiddleware(firstMiddleware)
-  addMiddleware(secondMiddleware)
+  dm.addMiddleware(firstMiddleware)
+  dm.addMiddleware(secondMiddleware)
 
   store.dispatch({ type: 'foo' })
   expect(firstMiddlewareWork).toBeCalledWith({ type: 'foo' })
@@ -70,7 +74,8 @@ test('all middlewares by separate add should be called', () => {
 })
 
 test('removed middlewares should not be called', () => {
-  const store = createStore(reducer, applyMiddleware(dynamicMiddlewares))
+  const dm = getDynamicMiddlewareManager();
+  const store = createStore(reducer, applyMiddleware(dm.dynamicMiddlewares))
   const firstMiddlewareWork = jest.fn()
   const firstMiddleware = () => next => (action) => {
     firstMiddlewareWork(action)
@@ -81,8 +86,8 @@ test('removed middlewares should not be called', () => {
     secondMiddlewareWork(action)
     return next(action)
   }
-  addMiddleware(firstMiddleware, secondMiddleware)
-  removeMiddleware(secondMiddleware)
+  dm.addMiddleware(firstMiddleware, secondMiddleware)
+  dm.removeMiddleware(secondMiddleware)
 
   store.dispatch({ type: 'foo' })
   expect(firstMiddlewareWork).toBeCalledWith({ type: 'foo' })
@@ -90,7 +95,8 @@ test('removed middlewares should not be called', () => {
 })
 
 test('reset middlewares should work', () => {
-  const store = createStore(reducer, applyMiddleware(dynamicMiddlewares))
+  const dm = getDynamicMiddlewareManager();
+  const store = createStore(reducer, applyMiddleware(dm.dynamicMiddlewares))
   const firstMiddlewareWork = jest.fn()
   const firstMiddleware = () => next => (action) => {
     firstMiddlewareWork(action)
@@ -101,8 +107,8 @@ test('reset middlewares should work', () => {
     secondMiddlewareWork(action)
     return next(action)
   }
-  addMiddleware(firstMiddleware, secondMiddleware)
-  resetMiddlewares()
+  dm.addMiddleware(firstMiddleware, secondMiddleware)
+  dm.resetMiddlewares()
 
   store.dispatch({ type: 'foo' })
   expect(firstMiddlewareWork).not.toBeCalled()

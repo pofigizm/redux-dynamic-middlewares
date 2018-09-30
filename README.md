@@ -16,32 +16,30 @@ npm install --save redux-dynamic-middlewares
 import { createStore, applyMiddleware } from 'redux'
 import rootReducer from './reducers/index'
 
-import dynamicMiddlewares from 'redux-dynamic-middlewares'
+import getDynamicMiddlewareManager from 'redux-dynamic-middlewares'
 
+const dynamicMiddlewareManager = getDynamicMiddlewares();
 const store = createStore(
   rootReducer,
   applyMiddleware(
     // ... other static middlewares
-    dynamicMiddlewares
+    dynamicMiddlewareManager.dynamicMiddlewares
   )
 )
 
 // some other place in your code
-
-import { addMiddleware, removeMiddleware, resetMiddlewares } from 'redux-dynamic-middlewares'
-
 const myMiddleware = store => next => action => {
   // do something
   return next(action)
 }
 
 // will add middleware to existing chain
-addMiddleware(myMiddleware /*[, anotherMiddleware ... ]*/)
+dynamicMiddlewareManager.addMiddleware(myMiddleware /*[, anotherMiddleware ... ]*/)
 
 // will remove middleware from chain (only which was added by `addMiddleware`)
-removeMiddleware(myMiddleware)
+dynamicMiddlewareManager.removeMiddleware(myMiddleware)
 
 // clean all dynamic middlewares
-resetMiddlewares()
+dynamicMiddlewareManager.resetMiddlewares()
 
 ```
