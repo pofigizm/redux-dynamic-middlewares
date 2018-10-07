@@ -1,5 +1,10 @@
 import { applyMiddleware, createStore } from 'redux'
-import dynamicMiddlewares, { addMiddleware, removeMiddleware, resetMiddlewares } from './'
+import dynamicMiddlewares, {
+  addMiddleware,
+  removeMiddleware,
+  resetMiddlewares,
+  createDynamicMiddlewares,
+} from './'
 
 const reducer = (state = {}, action) => {
   if (action.type === 'foo') return { foo: 'bar' }
@@ -107,4 +112,51 @@ test('reset middlewares should work', () => {
   store.dispatch({ type: 'foo' })
   expect(firstMiddlewareWork).not.toBeCalled()
   expect(secondMiddlewareWork).not.toBeCalled()
+})
+
+test('createDynamicMiddlewares should work', () => {
+  const storeGlobal = createStore(reducer, applyMiddleware(dynamicMiddlewares))
+  const globalMiddlewareWork = jest.fn()
+  const globalMiddleware = () => next => (action) => {
+    globalMiddlewareWork(action)
+    return next(action)
+  }
+  addMiddleware(globalMiddleware)
+
+  const dynamicMiddlewaresFirst = createDynamicMiddlewares()
+  const storeFirst = createStore(reducer, applyMiddleware(dynamicMiddlewaresFirst.enhancer))
+  const firstMiddlewareWork = jest.fn()
+  const firstMiddleware = () => next => (action) => {
+    firstMiddlewareWork(action)
+    return next(action)
+  }
+  dynamicMiddlewaresFirst.addMiddleware(firstMiddleware)
+
+  const dynamicMiddlewaresSecond = createDynamicMiddlewares()
+  const storeSecond = createStore(reducer, applyMiddleware(dynamicMiddlewaresSecond.enhancer))
+  const secondMiddlewareWork = jest.fn()
+  const secondMiddleware = () => next => (action) => {
+    secondMiddlewareWork(action)
+    return next(action)
+  }
+  dynamicMiddlewaresSecond.addMiddleware(secondMiddleware)
+
+  storeGlobal.dispatch({ type: 'foo' })
+  expect(globalMiddlewareWork).toBeCalledWith({ type: 'foo' })
+  expect(firstMiddlewareWork).not.toBeCalled()
+  expect(secondMiddlewareWork).not.toBeCalled()
+
+  globalMiddlewareWork.mockClear()
+
+  storeFirst.dispatch({ type: 'foo' })
+  expect(globalMiddlewareWork).not.toBeCalled()
+  expect(firstMiddlewareWork).toBeCalledWith({ type: 'foo' })
+  expect(secondMiddlewareWork).not.toBeCalled()
+
+  firstMiddlewareWork.mockClear()
+
+  storeSecond.dispatch({ type: 'foo' })
+  expect(globalMiddlewareWork).not.toBeCalled()
+  expect(firstMiddlewareWork).not.toBeCalled()
+  expect(secondMiddlewareWork).toBeCalledWith({ type: 'foo' })
 })
