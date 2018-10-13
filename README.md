@@ -1,5 +1,9 @@
-redux-dynamic-middlewares
-===============
+# redux-dynamic-middlewares
+
+ℹ️ If you are building big redux app see [redux-dynamic](https://github.com/pofigizm/redux-dynamic).
+
+[![npm version](https://img.shields.io/npm/v/redux-dynamic-middlewares.svg?style=flat-square)](https://www.npmjs.com/package/redux-dynamic-middlewares)
+[![npm downloads](https://img.shields.io/npm/dm/redux-dynamic-middlewares.svg?style=flat-square)](https://www.npmjs.com/package/redux-dynamic-middlewares)
 
 Allow add or remove redux middlewares dynamically (for example: on route change).
 
