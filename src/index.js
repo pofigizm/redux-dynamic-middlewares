@@ -2,15 +2,19 @@ import { compose } from 'redux'
 
 const createDynamicMiddlewares = () => {
   let allDynamicMiddlewares = []
+  let allApplyedDynamicMiddlewares = []
+  let store
 
-  const enhancer = store => next => (action) => {
-    const chain = allDynamicMiddlewares.map(middleware => middleware(store))
-
-    return compose(...chain)(next)(action)
+  const enhancer = (_store) => {
+    store = _store
+    return next => (action) => {
+      return compose(...allApplyedDynamicMiddlewares)(next)(action)
+    }
   }
 
   const addMiddleware = (...middlewares) => {
-    allDynamicMiddlewares = [...allDynamicMiddlewares, ...middlewares]
+    allApplyedDynamicMiddlewares.push(...middlewares.map(middleware => middleware(store)))
+    allDynamicMiddlewares.push(...middlewares)
   }
 
   const removeMiddleware = (middleware) => {
@@ -24,9 +28,12 @@ const createDynamicMiddlewares = () => {
     }
 
     allDynamicMiddlewares = allDynamicMiddlewares.filter((_, mdwIndex) => mdwIndex !== index)
+    allApplyedDynamicMiddlewares = allApplyedDynamicMiddlewares
+      .filter((_, mdwIndex) => mdwIndex !== index)
   }
 
   const resetMiddlewares = () => {
+    allApplyedDynamicMiddlewares = []
     allDynamicMiddlewares = []
   }
 
