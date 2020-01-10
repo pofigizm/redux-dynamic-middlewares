@@ -1,3 +1,6 @@
+## 2.0.0 (2020-01-10)
+* [braking changes] The `(store) =>` function of middleware will be run once
+
 ## 1.0.0 (2018-10-07)
 * Added possibility to use many instances (complex usage)
 ```
