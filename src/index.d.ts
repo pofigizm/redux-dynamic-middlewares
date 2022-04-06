@@ -1,7 +1,7 @@
 import { Middleware } from 'redux';
 
 export interface DynamicMiddlewares {
-  enhancer: Middlware,
+  enhancer: Middleware,
   addMiddleware: (...middlewares: Middleware[]) => void,
   removeMiddleware: (middleware: Middleware) => void,
   resetMiddlewares: () => void,
