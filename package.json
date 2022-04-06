@@ -1,11 +1,11 @@
 {
   "name": "redux-dynamic-middlewares",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Allow add or remove redux middlewares dynamically",
   "main": "lib/index.js",
   "scripts": {
     "lint": "eslint src/ --fix",
-    "build": "babel -d lib/ src/",
+    "build": "babel -d lib/ src/ && cp src/index.d.ts lib/",
     "test": "jest"
   },
   "repository": {
